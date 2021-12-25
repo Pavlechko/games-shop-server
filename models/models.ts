@@ -2,22 +2,22 @@ import { DataTypes } from "sequelize";
 
 import { sequelize } from "../db";
 
-const Users = sequelize.define('users', {
+export const Users = sequelize.define('users', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING },
   role: { type: DataTypes.STRING, defaultValue: 'USER' }
 });
 
-const Baskets = sequelize.define('baskets', {
+export const Baskets = sequelize.define('baskets', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true }
 });
 
-const BasketsGames = sequelize.define('baskets_games', {
+export const BasketsGames = sequelize.define('baskets_games', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
-const Games = sequelize.define('games', {
+export const Games = sequelize.define('games', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
   price: { type: DataTypes.INTEGER, allowNull: false },
@@ -26,34 +26,30 @@ const Games = sequelize.define('games', {
   description: { type: DataTypes.STRING, allowNull: false }
 });
 
-const Genres = sequelize.define('genres', {
+export const Genres = sequelize.define('genres', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false }
 });
 
-const Publishers = sequelize.define('publishers', {
+export const Publishers = sequelize.define('publishers', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false }
 });
 
-const Rating = sequelize.define('rating', {
+export const Rating = sequelize.define('rating', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.INTEGER, allowNull: false }
 });
 
-const GameInfo = sequelize.define('game_info', {
+export const GameInfo = sequelize.define('game_info', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   title: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.STRING, allowNull: false }
 });
 
-const GamesGenres = sequelize.define('games_genres', {
+export const GenresPublishers = sequelize.define('genres_publishers', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-})
-
-const GenresPublishers = sequelize.define('genres_publishers', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-})
+});
 
 Users.hasOne(Baskets);
 Baskets.belongsTo(Users);
@@ -76,22 +72,12 @@ BasketsGames.belongsTo(Games);
 Games.hasMany(GameInfo);
 GameInfo.belongsTo(Games);
 
-Genres.belongsToMany(Games, { through: GamesGenres });
-Games.belongsToMany(Genres, { through: GamesGenres });
+Genres.hasMany(Games);
+Games.belongsTo(Genres);
 
 Genres.belongsToMany(Publishers, { through: GenresPublishers });
 Publishers.belongsToMany(Genres, { through: GenresPublishers });
 
 export const db = {
-  sequelize,
-  Users,
-  Baskets,
-  BasketsGames,
-  Games,
-  Genres,
-  Publishers,
-  Rating,
-  GameInfo,
-  GamesGenres,
-  GenresPublishers,
+  sequelize
 };
