@@ -1,13 +1,46 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 
+import { UserAttributes } from "../types/userType";
 import { sequelize } from "../db";
 
-export const Users = sequelize.define('users', {
+// export const Users = sequelize.define('users', {
+//   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+//   email: { type: DataTypes.STRING, unique: true },
+//   password: { type: DataTypes.STRING },
+//   role: { type: DataTypes.STRING, defaultValue: 'USER' }
+// });
+
+
+interface UserCreationAttributes extends Optional<UserAttributes, "id"> { }
+
+interface UserInstance extends Model<UserAttributes, UserCreationAttributes>, UserAttributes { }
+
+export const Users = sequelize.define<UserInstance>('users', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING },
   role: { type: DataTypes.STRING, defaultValue: 'USER' }
 });
+
+// export class Users extends Model {
+//   public id!: number;
+//   public email!: string;
+//   public password!: string;
+//   public role!: string;
+// }
+
+// Users.init(
+//   {
+//     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+//     email: { type: DataTypes.STRING, unique: true },
+//     password: { type: DataTypes.STRING },
+//     role: { type: DataTypes.STRING, defaultValue: 'USER' }
+//   },
+//   {
+//     tableName: 'users',
+//     sequelize,
+//   }
+// )
 
 export const Baskets = sequelize.define('baskets', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true }
