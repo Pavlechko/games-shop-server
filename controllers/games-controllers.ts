@@ -5,6 +5,7 @@ import fileUpload from 'express-fileupload';
 
 import { Games } from '../models/models';
 import ApiError from '../error/api-error';
+import { where } from 'sequelize/dist';
 
 const uuId = v4();
 
@@ -27,17 +28,44 @@ class GamesControllers {
 
   };
 
-  async getAll() {
+  async getAll(req: Request, res: Response) {
+    const { genreId, publisherId } = req.query;
+    let page: number = +(req.query?.page!) || 1;
+    let limit: number = +(req.query?.limit!) || 9;
+    let games;
+    let offset = page * limit - limit;
 
+    if (!genreId && !publisherId) {
+      games = await Games.findAndCountAll({ limit, offset });
+    }
+    if (genreId && !publisherId) {
+      games = await Games.findAndCountAll({ where: { genreId }, limit, offset });
+    }
+    if (!genreId && publisherId) {
+      games = await Games.findAndCountAll({ where: { publisherId }, limit, offset });
+    }
+    if (genreId && publisherId) {
+      games = await Games.findAndCountAll({ where: { genreId, publisherId }, limit, offset });
+    }
+    return res.json(games);
   };
 
-  async getOne() {
-
+  async getOne(req: Request, res: Response) {
+    const id: number = +(req.params?.id!);
+    const game = await Games.findOne({ where: { id } });
+    return res.json(game);
   }
 
   async delete() {
 
   }
 }
+
+type Quert = {
+  genreId: number;
+  publisherId: number;
+  limit: number;
+  page: number;
+};
 
 export default new GamesControllers();
